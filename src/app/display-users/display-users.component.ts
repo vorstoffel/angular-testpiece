@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Observable } from 'rxjs';
-import { User } from '../User.model';
+import { User } from '../models/user.model';
 
 @Component({
   selector: 'app-display-users',
