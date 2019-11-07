@@ -1,0 +1,7 @@
+<p>List of all users with even IDs:</p> 
+
+<ul>
+    <li *ngFor="let user of users$ | async">
+        <span>{{user.id}}: {{user.name}}</span>
+    </li>
+</ul>
