@@ -1,4 +1,6 @@
-# RxjsUebung
+# Angular Testpiece
+
+This application will help to learn different features of angular and rxjs. 
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.9.
 
