@@ -1,7 +1,8 @@
-<p>List of all users with even IDs:</p> 
-
-<ul>
-    <li *ngFor="let user of users$ | async">
-        <span>{{user.id}}: {{user.name}}</span>
-    </li>
-</ul>
+<div *ngFor="let userpost of userposts$ | async | keyvalue">
+    <h2>UserId {{userpost.key}} Posts:</h2>
+    <div *ngFor="let post of userpost.value">
+        <h5>{{post.id}}: {{post.title}}</h5>
+        <div>{{post.body}}</div>
+    </div>
+   <hr>
+</div>

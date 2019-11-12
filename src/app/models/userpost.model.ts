@@ -1,6 +1,7 @@
 export interface Userpost {
     id: number;
     username: string;
+    name: string;
     title: string;
-    post: string;
+    body: string;
 }
