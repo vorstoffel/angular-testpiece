@@ -1,6 +1,6 @@
-<div *ngFor="let userpost of userposts$ | async | keyvalue">
-    <h2>UserId {{userpost.key}} Posts:</h2>
-    <div *ngFor="let post of userpost.value">
+<div *ngFor="let userpost of userposts$ | async">
+    <h2>User {{userpost.id}}: {{userpost.username}}</h2>
+    <div *ngFor="let post of userpost.posts">
         <h5>{{post.id}}: {{post.title}}</h5>
         <div>{{post.body}}</div>
     </div>

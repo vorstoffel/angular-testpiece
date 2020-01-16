@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, flatMap, groupBy } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Observable, combineLatest } from 'rxjs';
 import { User } from './models/user.model';
 import { Post } from './models/post.model';
-import { Userpost } from './models/userpost.model';
+import { Userpost, Userpost2 } from './models/userpost.model';
 
 export type Userposts = Map<number, Post[]>;
 
@@ -18,21 +18,72 @@ export class AppComponent implements OnInit {
   usersURL = 'https://jsonplaceholder.typicode.com/users';
   postsURL = 'https://jsonplaceholder.typicode.com/posts';
 
-  // users$: Observable<User[]>;
-  // userposts$: Observable<Userpost[]>;
-  userposts$: Observable<Userposts>;
+  // userposts$: Observable<Userposts>;
+  userposts$: Observable<Userpost2[]>;
 
   constructor(private http: HttpClient) { }
 
   ngOnInit() {
-    // this.users$ = this.getEvenUsers();
-    // this.userposts$ = this.getEvenUserposts();
+    // this.userposts$ = this.createUserposts();
+    // this.createUserposts().subscribe(test => { console.log('RESULT ', test) })
 
-    this.userposts$ = this.createPostMap();
-    this.createPostMap().subscribe( test => {console.log('RESULT ', test)})
+    this.userposts$ = combineLatest([this.getUsersHttp(this.usersURL), this.getPostsHttp(this.postsURL)])
+      .pipe(
+        map(([users, posts]) => {
+          return this.mapToUserpostsReduce(users, posts);
+        })
+      );
+
+    /* this.userposts$ = combineLatest([this.getEvenUsers(), this.getPostsHttp(this.postsURL)])
+          .pipe(
+            map(([users, posts]) => {
+              return this.mapToUserposts(users, posts);
+            })
+          ); */
   }
 
-  // Post[] will be mapped to Userpost[]
+  mapToUserpostsReduce(users: User[], posts: Post[]): Userpost2[] {
+    return users.reduce((userposts, user) => {
+
+      /*       let postsOfUsers: Post[] = posts.reduce((posts, post) => {
+              if (user.id === post.userId) {
+                posts.push(post);
+              }
+              return posts;
+            }, [] as Post[]); */
+
+      let PostsOfUsersFilter: Post[] = posts.filter(post => post.userId === user.id);
+
+      let userpost2: Userpost2 = {
+        ...user,
+        posts: PostsOfUsersFilter
+      }
+      userposts.push(userpost2);
+      return userposts;
+    }, [] as Userpost2[]);
+  }
+
+  mapToUserposts(users: User[], posts: Post[]): Userpost2[] {
+    let userposts: Userpost2[] = [];
+
+    for (let i = 0; i < users.length; i++) {
+      let postsOfUsers: Post[] = [];
+
+      for (let j = 0; j < posts.length; j++) {
+        if (users[i].id === posts[j].userId) {
+          postsOfUsers.push(posts[j]);
+        }
+      }
+
+      let userpost2: Userpost2 = {
+        ...users[i],
+        posts: postsOfUsers,
+      }
+      userposts.push(userpost2);
+    }
+    return userposts;
+  }
+
   getEvenUserposts(): Observable<Userpost[]> {
     return combineLatest([this.getEvenUsers(), this.getPostsHttp(this.postsURL)]).pipe(
       map(([users, posts]) => {
@@ -53,20 +104,10 @@ export class AppComponent implements OnInit {
     );
   }
 
-
-  createPostMap(): Observable<Userposts> {
+  createUserposts(): Observable<Userposts> {
     return this.getPostsHttp(this.postsURL).pipe(
       map(posts => {
-        return posts.reduce((accumulator, post) => {
-          const userId = post.userId;
-          const userPosts = accumulator.get(userId);
-          if (userPosts) {
-            const newPosts = userPosts.concat([post]);
-            return accumulator.set(userId, newPosts);      
-          } else {
-            return accumulator.set(userId, [post]);
-          }
-        }, new Map<number, Post[]>())
+        return null;
       })
     );
   }
